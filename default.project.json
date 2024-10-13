@@ -1,5 +1,5 @@
 {
-	"name": "jecs-topo-runtime",
+	"name": "topo-runtime",
 	"tree": {
 		"$path": "src"
 	}

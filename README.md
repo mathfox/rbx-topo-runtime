@@ -1,7 +1,4 @@
-# jecs-topo-runtime
-
-This package does not really depend on the jecs functionality.
-This package will probably eventually be branched out into an abstract topo runtime package.
+# topo-runtime
 
 ## Basic Setup
 
@@ -25,12 +22,11 @@ loop.replaceSystem(system, () => {})
 
 ## Builtin hooks
 
-useEvent
-useThrottle
+- useEvent
+- useThrottle
 
 There is `useHookState` function for implementing custom hooks.
 
-## Side note
+## Addons
 
-Not a single test has been written for the package so it may contain
-There has not been written any test
+There is `topo-hooks` package that adds other useful hooks.
