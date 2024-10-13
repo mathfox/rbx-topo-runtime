@@ -1,0 +1,30 @@
+{
+	"name": "@rbxts/jecs-topo-runtime",
+	"version": "0.0.3",
+	"description": "A Runtime for Jecs",
+	"main": "src/init.luau",
+	"types": "src/index.d.ts",
+	"files": ["src"],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mathfox/rbx-jecs-topo-runtime.git"
+	},
+	"keywords": ["roblox", "roblox-ts", "topo", "runtime"],
+	"author": {
+		"name": "Ivan Leontev",
+		"url": "https://github.com/mathfox"
+	},
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/mathfox/rbx-jecs-topo-runtime/issues"
+	},
+	"homepage": "https://github.com/mathfox/rbx-jecs-topo-runtime#readme",
+	"publishConfig": {
+		"access": "public"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.3",
+		"@rbxts/compiler-types": "^3.0.0-types.0",
+		"@rbxts/types": "^1.0.805"
+	}
+}
