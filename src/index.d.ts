@@ -40,7 +40,10 @@ export interface SystemSamples extends Array<number> {
 	index?: number | undefined;
 }
 
-export function systemName(system: System): string;
+export function getSystemInfo(system: System): {
+	readonly moduleFullName: string;
+	readonly functionName: string;
+};
 
 /**
  * @class Loop
