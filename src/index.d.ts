@@ -111,7 +111,7 @@ export class Loop {
      * })
      * ```
      */
-    schedule(...systems: System[]): () => void;
+    schedule(...systems: System[]): LuaTuple<[step: () => void, evict: () => void]>;
 }
 
 export function useDeltaTime(): number;
