@@ -290,17 +290,11 @@ type LoopImpl = {
 
 	new: () -> Loop,
 
-	scheduleSystem: (self: Loop, system: System) -> System,
-	evictSystem: (self: Loop, system: System) -> System,
-	replaceSystem: (self: Loop, old: System, new: System) -> (),
+	_scheduleSystem: (self: Loop, system: System) -> System,
+	_evictSystem: (self: Loop, system: System) -> System,
+	_replaceSystem: (self: Loop, old: System, new: System) -> (),
 
-	--begin: (
-	--	self: Loop,
-	--	events: { [string]: { Connect: (...any) -> ...any, [any]: any } }
-	--) -> {
-	--	[string]: RBXScriptConnection,
-	--},
-	begin: (self: Loop, event: { Connect: (...any) -> ...any, [any]: any }) -> RBXScriptConnection,
+	schedule: (self: Loop, ...System) -> () -> (),
 }
 
 type Loop = typeof(setmetatable({} :: LoopProperties, (nil :: any) :: LoopImpl))
@@ -318,7 +312,7 @@ end
 local Loop = {} :: LoopImpl
 Loop.__index = Loop
 
-function Loop.new(...)
+function Loop.new()
 	local self = setmetatable({
 		_systemState = {},
 		_systems = {},
@@ -331,14 +325,14 @@ function Loop.new(...)
 	return self
 end
 
-function Loop:scheduleSystem(system)
+function Loop:_scheduleSystem(system)
 	table.insert(self._systems, system)
 	self._systemState[system] = {}
 
 	return system
 end
 
-function Loop:evictSystem(system)
+function Loop:_evictSystem(system)
 	local systemIndex = table.find(self._systems, system)
 
 	if systemIndex == nil then
@@ -365,7 +359,7 @@ end
 	@param old System
 	@param new System
 ]=]
-function Loop:replaceSystem(old, new)
+function Loop:_replaceSystem(old, new)
 	local systemIndex = table.find(self._systems, old)
 
 	if not systemIndex then
@@ -382,30 +376,24 @@ function Loop:replaceSystem(old, new)
 		self._skipSystems[old] = nil
 		self._skipSystems[new] = true
 	end
-
-	for _, system in self._systems do
-		if type(system) == "table" and system.after then
-			local index = table.find(system.after, old)
-
-			if index then
-				system.after[index] = new
-			end
-		end
-	end
 end
 
-function Loop:begin(event)
-	--local connections: { [string]: RBXScriptConnection } = {}
+function Loop:schedule(...)
+	local systems = { ... }
 
-	--for eventName, event in events do
+	for i = 1, select("#", ...) do
+		local system = select(i, ...)
+		self:_scheduleSystem(system)
+	end
+
 	local lastTime = os.clock()
 
-	local function stepSystems()
+	return function()
 		local currentTime = os.clock()
 		local deltaTime = currentTime - lastTime
 		lastTime = currentTime
 
-		for _, system in self._systems do
+		for _, system in systems do
 			start({
 				system = self._systemState[system],
 				frame = {
@@ -499,14 +487,11 @@ function Loop:begin(event)
 				debug.profileend()
 			end)
 		end
+	end, function()
+		for _, system in systems do
+			self:_evictSystem(system)
+		end
 	end
-
-	return event:Connect(stepSystems)
-
-	--		connections[eventName] = event:Connect(stepSystems)
-	--	end
-	--
-	--	return connections
 end
 
 local EVENT_CONNECT_METHODS = { "Connect", "on", "connect" }

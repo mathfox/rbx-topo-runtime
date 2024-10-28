@@ -4,20 +4,28 @@
 
 ```ts
 const world = new World()
-const loop = new Loop(world, ...some other arguments that will be passed to systems)
+const loop = new Loop()
 
-const connection = loop.begin(RunService.Heartbeat)
-
-const system = (arguments from loop constructor call) => {
-    // some work
+function someSystem() {
+    // do something
 }
 
-loop.scheduleSystem(system)
+const [step, evict] = loop.withStep(someSystem_1, someSystem_2)
+
+RunService.Heartbeat.Connect(() => {
+    step();
+})
 
 // hot reload stuff
-loop.evictSystem(system)
+defineCleanupCallback(() => {
+    evict();
+})
+
+// another way of scheduling systems
+loop.scheduleSystem(someSystem)
+loop.evictSystem(someSystem)
 // or more convenient
-loop.replaceSystem(system, () => {})
+loop.replaceSystem(someSystem, () => {})
 ```
 
 ## Builtin hooks
