@@ -272,9 +272,6 @@ type SystemSamples = {
 }
 
 type LoopProperties = {
-	_state: { any },
-	_stateLength: number,
-
 	_systems: { System },
 	_systemState: {
 		[System]: {},
@@ -323,8 +320,6 @@ Loop.__index = Loop
 
 function Loop.new(...)
 	local self = setmetatable({
-		_state = { ... },
-		_stateLength = select("#", ...),
 		_systemState = {},
 		_systems = {},
 		_systemErrors = {},
@@ -436,7 +431,7 @@ function Loop:begin(event)
 				local thread = coroutine.create(system)
 
 				local startTime = os.clock()
-				local success, errorValue = coroutine.resume(thread, unpack(self._state, 1, self._stateLength))
+				local success, errorValue = coroutine.resume(thread)
 
 				if profiling then
 					local duration = os.clock() - startTime
