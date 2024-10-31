@@ -302,13 +302,6 @@ type Loop = typeof(setmetatable({} :: LoopProperties, (nil :: any) :: LoopImpl))
 local recentErrors = {}
 local recentErrorLastTime = 0
 
-local function getSystemInfo(system: System): { moduleFullName: string, functionName: string }
-	return {
-		moduleFullName = debug.info(system, "s") :: string,
-		functionName = debug.info(system, "n") :: string,
-	}
-end
-
 local Loop = {} :: LoopImpl
 Loop.__index = Loop
 
@@ -411,10 +404,9 @@ function Loop:schedule(...)
 					return
 				end
 
-				local systemInfo = getSystemInfo(system)
-				local systemName = `{systemInfo.moduleFullName} -> {systemInfo.functionName}`
+				--local systemName = `{debug.info(system, "s")} -> {debug.info(system, "n")}`
 
-				debug.profilebegin(`system: {systemName}`)
+				--debug.profilebegin(`system: {systemName}`)
 
 				local thread = coroutine.create(system)
 
@@ -442,7 +434,7 @@ function Loop:schedule(...)
 					task.spawn(
 						error,
 						("System %s yielded! Its thread has been closed. " .. "Yielding in systems is not allowed."):format(
-							systemName
+							`{debug.info(system, "s")} -> {debug.info(system, "n")}`
 						)
 					)
 				end
@@ -453,7 +445,10 @@ function Loop:schedule(...)
 						recentErrors = {}
 					end
 
-					local errorString = `{systemName}: {errorValue :: string}\n{debug.traceback(thread)}`
+					local errorString =
+						`{`{debug.info(system, "s")} -> {debug.info(system, "n")}`}: {errorValue :: string}\n{debug.traceback(
+							thread
+						)}`
 
 					if not recentErrors[errorString] then
 						task.spawn(error, errorString)
@@ -752,5 +747,4 @@ return {
 
 	useEvent = useEvent,
 	useThrottle = useThrottle,
-	getSystemInfo = getSystemInfo,
 }
