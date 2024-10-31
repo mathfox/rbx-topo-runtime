@@ -373,7 +373,8 @@ local exports = {
 setmetatable(exports, {
     __index = function(self, index)
         if index == "key" then
-            local source, name, line = debug.info(2, "snl")
+            local source, line = debug.info(3, "sl")
+            local name = debug.info(2, "n");
             return `{source}::{name}::{line}`
         end
 
