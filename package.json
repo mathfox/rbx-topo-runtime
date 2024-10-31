@@ -23,8 +23,6 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.3",
-		"@rbxts/compiler-types": "^3.0.0-types.0",
-		"@rbxts/types": "^1.0.805"
+		"@rbxts/compiler-types": "^3.0.0-types.0"
 	}
 }
