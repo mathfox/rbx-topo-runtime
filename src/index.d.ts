@@ -60,3 +60,5 @@ export class Loop {
 }
 
 export function useDeltaTime(): number;
+
+export declare const key: string;

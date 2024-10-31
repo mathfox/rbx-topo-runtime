@@ -150,11 +150,6 @@ end
 	@param cleanupCallback (storage: {}) -> boolean? -- A function to run when the storage for this hook is cleaned up
 ]=]
 local function useHookState(baseKey: any, discriminator: any, cleanupCallback: CleanupCallback): any
-	--local file, line = debug.info(3, "sl")
-	--local fn = debug.info(2, "f")
-
-	--local baseKey = string.format("%s:%s:%d", tostring(fn), file, line)
-
 	local currentFrame = stack[#stack]
 	if currentFrame == nil then
 		error("Attempt to access topologically-aware storage outside of a Loop-system context.", 3)
@@ -166,8 +161,6 @@ local function useHookState(baseKey: any, discriminator: any, cleanupCallback: C
 
 	local accessedKeys = currentFrame.accessedKeys[baseKey]
 
-	--local key = #accessedKeys
-    -- I swear luau is so annoying
     local key = 0 :: any;
 
 	if discriminator ~= nil then
@@ -367,7 +360,7 @@ function Loop:schedule(system)
     end
 end
 
-return {
+local exports = {
 	start = start,
 	useHookState = useHookState,
 	useFrameState = useFrameState,
@@ -376,3 +369,16 @@ return {
 	useDeltaTime = useDeltaTime,
 	Loop = Loop,
 }
+
+setmetatable(exports, {
+    __index = function(self, index)
+        if index == "key" then
+            local source, name, line = debug.info(2, "snl")
+            return `{source}::{name}::{line}`
+        end
+
+        return nil :: any
+    end
+})
+
+return exports

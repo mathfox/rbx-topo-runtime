@@ -34,5 +34,6 @@ defineCleanupCallback(() => {
 ## Hooks
 
 Use `useHookState` function for implementing custom hooks.
+If you don't want to provide keys in hooks, use `key` value exported from this package.
 
 There is `topo-hooks` package that provides a set of common hooks.
