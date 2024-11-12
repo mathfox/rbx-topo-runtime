@@ -1,0 +1,39 @@
+{
+    "version": "0.0.1",
+    "description": "Transformer for topologically-aware runtime for Roblox",
+    "main": "out/index.js",
+    "types": "index.d.ts",
+    "files": [
+        "out",
+        "index.d.ts",
+        "!**/*.tsbuildinfo"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mathfox/rbxts-transform-topo-runtime.git"
+    },
+    "keywords": [
+        "roblox",
+        "roblox-ts",
+        "topo",
+        "topological",
+        "runtime"
+    ],
+    "author": {
+        "name": "Ivan Leontev",
+        "url": "https://github.com/mathfox"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/mathfox/rbxts-transform-topo-runtime/issues"
+    },
+    "homepage": "https://github.com/mathfox/rbxts-transform-topo-runtime#readme",
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "ts-patch": "^3.2.1",
+        "typescript": "^5.6.3",
+        "uuid": "^11.0.3"
+    }
+}
