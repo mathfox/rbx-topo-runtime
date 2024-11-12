@@ -5,11 +5,11 @@ export interface FrameState {
 }
 
 export interface Node {
-	frame?: FrameState;
+	frame?: FrameState,
 	currentSystem?: System,
 	system?: Map<System, {
-		storage: Map<string, any>;
-		cleanupCallback: (storage: any) => boolean | void;
+		storage: Map<string, any>,
+		cleanupCallback: (storage: any) => boolean | void,
 	}>;
 }
 
