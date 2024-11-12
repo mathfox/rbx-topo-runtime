@@ -359,12 +359,6 @@ function Loop:schedule(system)
     end
 end
 
-local function getKey()
-    local source, line = debug.info(3, "sl")
-    local name = debug.info(2, "n");
-    return `{source}::{name}::{line}`
-end
-
 local exports = {
 	start = start,
 	useHookState = useHookState,
@@ -373,7 +367,6 @@ local exports = {
 	withinTopoContext = withinTopoContext,
 	useDeltaTime = useDeltaTime,
 	Loop = Loop,
-    getKey = getKey,
 }
 
 return exports

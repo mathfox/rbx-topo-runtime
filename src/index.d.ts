@@ -60,5 +60,3 @@ export class Loop {
 }
 
 export function useDeltaTime(): number;
-
-export declare function getKey(): string;
