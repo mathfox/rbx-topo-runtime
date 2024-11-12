@@ -2,10 +2,12 @@
     "name": "@rbxts/topo-runtime",
     "version": "0.4.2",
     "description": "Topologically-aware runtime for Roblox",
-    "main": "src/init.luau",
-    "types": "src/index.d.ts",
+    "main": "lib/init.luau",
+    "types": "lib/index.d.ts",
     "files": [
-        "src"
+        "lib",
+        "transform/out",
+        "!**/*.tsbuildinfo"
     ],
     "repository": {
         "type": "git",

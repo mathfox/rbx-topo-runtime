@@ -18,8 +18,6 @@
         "rootDir": "./src",
         "outDir": "./out",
         //"baseUrl": "../examples",
-        "incremental": true,
-        "tsBuildInfoFile": "./out/tsconfig.tsbuildinfo",
         "plugins": [
             {
                 "transform": "../out/index.js",
