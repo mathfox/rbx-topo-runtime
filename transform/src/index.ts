@@ -7,12 +7,12 @@ import { TransformContext } from "./transformer";
 // It returns a transformer function that will be called for each file that is transformed which iterates over every node in the file
 // The program and config arguments are passed by the compiler
 
-export default function(program: ts.Program) {
+export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFile> {
 	return ((transformationContext) => {
 		const context = new TransformContext(program, transformationContext);
 
 		return (file) => {
-            return context.transform(file)
+            return context.visit(file)
         };
-	}) satisfies ts.TransformerFactory<ts.SourceFile>
+	})
 }
