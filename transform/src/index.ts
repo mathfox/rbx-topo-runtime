@@ -1,6 +1,6 @@
 import ts from "typescript";
-import { TransformContext } from "./transformer";
-
+import { transformFile } from "./transformFile";
+import { TransformState } from "./TransformState";
 
 // The transformer entry point
 // This provides access to necessary resources and the user specified configuration
@@ -8,11 +8,13 @@ import { TransformContext } from "./transformer";
 // The program and config arguments are passed by the compiler
 
 export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFile> {
-	return ((transformationContext) => {
-		const context = new TransformContext(program, transformationContext);
+	return context => {
+        const state = new TransformState(program, context);
 
-		return (file) => {
-            return context.visit(file)
-        };
-	})
+		return file => {
+            const output = transformFile(file, state);
+
+            return output;
+        }
+    }
 }
