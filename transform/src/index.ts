@@ -1,6 +1,6 @@
 import ts from "typescript";
-import { transformFile } from "./transformFile";
 import { TransformState } from "./TransformState";
+import { visitNodeAndChildren } from "./visitNodeAndChildren";
 
 // The transformer entry point
 // This provides access to necessary resources and the user specified configuration
@@ -11,10 +11,6 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
 	return context => {
         const state = new TransformState(program, context);
 
-		return file => {
-            const output = transformFile(file, state);
-
-            return output;
-        }
+		return file => visitNodeAndChildren(file, state);
     }
 }
