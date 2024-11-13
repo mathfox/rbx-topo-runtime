@@ -4,10 +4,9 @@ import { v4 as uuid } from "uuid";
 import path from "path"
 
 export function visitHookCalls(node: ts.Node, state: TransformState): [true, ts.Node[]] | [false, undefined] {
-    const f = state.factory;
+    const f = state.context.factory;
 
-    //if (ts.isImportClause(node)) {
-    //}
+    node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
 
 //    if (ts.isFunctionDeclaration(node)) {
 //        //for (const s of node.body?.statements!) {
@@ -28,27 +27,6 @@ export function visitHookCalls(node: ts.Node, state: TransformState): [true, ts.
 //        console.log(node)
 //        console.log("Function ", node.name?.escapedText, "call other funcs inside times:", times);
 //    }
-
-    //if (ts.isVariableStatement(node)) {
-    //    node.declarationList.declarations[0]
-    //}
-
-    //const state = ts.factory.createVariableStatement(
-    //    undefined,
-    //    ts.factory.createVariableDeclarationList(
-    //        [ts.factory.createVariableDeclaration(
-    //        ts.factory.createIdentifier("value"),
-    //        undefined,
-    //        undefined,
-    //        ts.factory.createCallExpression(
-    //            ts.factory.createIdentifier("custom_hook_1"),
-    //            undefined,
-    //            []
-    //        )
-    //        )],
-    //        ts.NodeFlags.Const | ts.NodeFlags.Constant
-    //    )
-    //)
 
     if (ts.isCallExpression(node)) {
         // TODO: use unique indexes instead of generating UUID for everything.

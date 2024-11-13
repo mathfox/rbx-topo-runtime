@@ -13,6 +13,11 @@ It also collects debug information which could be used in debugger implementatio
 ## Basic Setup
 
 ```ts
+
+function customHook() {
+    const storage = useHookState();
+}
+
 const loop = new Loop();
 
 function someSystem() {
