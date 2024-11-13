@@ -245,8 +245,8 @@ end
 
 function Loop:schedule(system)
     --local key2 = _G.__TOPO_RUNTIME_SCHEDULE_KEY
-    local source, name = debug.info(system, "sn")
-    local key = `{source}:{name}`
+    local source, name, line = debug.info(system, "snl")
+    local key = `{source}:{name}:{line}`
 
     self._systems[key] = system
 	self._systemState[key] = {}

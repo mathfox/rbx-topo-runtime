@@ -36,31 +36,39 @@ function cyrb53(str: string, seed = 0): number {
 function visitNode(context: TransformContext, node: ts.Node): ts.Node {
     if (ts.isFunctionDeclaration(node)) {
         //console.log("got function expression", node.name?.getText())
-        console.log("function expression has symbol:", context.program.getTypeChecker().getSymbolAtLocation(node))
-
-//        return ts.visitEachChild(node, (childNode) => {
-//            if (ts.isCallExpression(childNode) && childNode.getText() === "$useHookState") {}
-//
-//            return childNode
-//        }, context.context);
+        //console.log("function expression has symbol:", context.program.getTypeChecker().getSymbolAtLocation(node))
     }
 
+    const f = context.factory;
+
     if (ts.isCallExpression(node)) {
-        const checker = context.program.getTypeChecker();
-        //const symbol = checker.getSymbolAtLocation(node.getStart());
-        //console.log("call expression has symbol:", symbol);
-        //if (node.expression.getText() === "$useHookState") {
-        //    // TODO: use unique indexes instead of generating UUID for everything.
-        //    return context.factory.createCallExpression(
-        //        context.factory.createIdentifier("useHookState"),
-        //        undefined,
-        //        [
-        //            node.arguments[0] || context.factory.createIdentifier("undefined"),
-        //            node.arguments[1] || context.factory.createIdentifier("undefined"),
-        //            context.factory.createStringLiteral(uuid()),
-        //        ]
-        //    );
-        //}
+
+        if (node.expression.getText() === "useHookState") {
+            // TODO: use unique indexes instead of generating UUID for everything.
+
+            ts.visitNode(node, (node) => {
+
+            return f.createBlock([
+                f.createExpressionStatement(f.createBinaryExpression(
+                    f.createPropertyAccessExpression(
+                        f.createIdentifier("_G"),
+                        f.createIdentifier("__TOPO_RUNTIME_BASE_KEY")
+                    ),
+                    f.createToken(ts.SyntaxKind.EqualsToken),
+                    f.createStringLiteral(uuid())
+                )),
+                f.createExpressionStatement(f.createCallExpression(
+                    f.createIdentifier("useHookState"),
+                    undefined,
+                    [
+                        node.arguments[0] || f.createIdentifier("undefined"),
+                        node.arguments[1] || f.createIdentifier("undefined"),
+                    ]
+                )),
+            ]);
+
+            })
+        }
     }
 
     // return the original node

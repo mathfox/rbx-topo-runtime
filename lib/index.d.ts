@@ -16,7 +16,6 @@ export interface Node {
 export function start(node: Node, fn: () => void): void;
 
 export function useHookState<TStorage>(
-    baseKey: unknown,
 	discriminator?: unknown,
 	cleanupCallback?: (storage: TStorage) => boolean | void,
 ): TStorage;
