@@ -2,11 +2,18 @@ import ts from "typescript";
 import { TransformState } from "./TransformState";
 import { v4 as uuid } from "uuid";
 import path from "path"
+import { getFunctionDeclaration } from "./getFunctionDeclaration";
+
+function checkDeclarationUseRecursive(expr: ts.Expression, decl: ts.Declaration, state: TransformState): boolean {
+    const declaration = getFunctionDeclaration(expr, state);
+
+    return false
+}
 
 export function visitHookCalls(node: ts.Node, state: TransformState): [true, ts.Node[]] | [false, undefined] {
     const f = state.context.factory;
 
-    node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
+    //node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
 
 //    if (ts.isFunctionDeclaration(node)) {
 //        //for (const s of node.body?.statements!) {
@@ -29,9 +36,15 @@ export function visitHookCalls(node: ts.Node, state: TransformState): [true, ts.
 //    }
 
     if (ts.isCallExpression(node)) {
+        const decl = getFunctionDeclaration(node.expression, state);
+        if (decl) {}
+
+        console.log(node.expression.getText(), " is declared at:", decl?.getSourceFile().getLineAndCharacterOfPosition(decl.getStart()));
         // TODO: use unique indexes instead of generating UUID for everything.
 
         if (node.expression.getText() === "useHookState") {
+            //console.log(`got useHookState call expression, source declaration is:`, declaration);
+
             const hookCallStatement = f.createReturnStatement(f.createCallExpression(
                 f.createIdentifier("useHookState"),
                 undefined,

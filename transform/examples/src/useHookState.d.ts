@@ -1,0 +1,1 @@
+export function useHookState(discriminator?: unknown, cleanup?: Function): void;

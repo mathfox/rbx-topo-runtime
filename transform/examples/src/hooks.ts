@@ -1,5 +1,6 @@
 import { v4 } from "uuid"
 import { testHook } from "./testHook";
+import { useHookState } from "./useHookState";
 
 function custom_hook_1(discriminator?: unknown) {
     const storage_1 = useHookState(discriminator, () => {})
@@ -19,6 +20,3 @@ function system_1() {
     testHook();
 }
 
-function useHookState(discriminator?: unknown, cleanup?: Function) {
-    throw new Error("Function not implemented.");
-}
