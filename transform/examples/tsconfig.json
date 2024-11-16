@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "allowSyntheticDefaultImports": true,
+        "downlevelIteration": true,
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "moduleDetection": "force",
+        "target": "ESNext",
+        //"typeRoots": [
+        //    "node_modules/@rbxts",
+        //],
+        "exactOptionalPropertyTypes": true,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "rootDir": "./src",
+        "outDir": "./out",
+        //"baseUrl": "../examples",
+        "plugins": [
+            {
+                "transform": "../out/index.js",
+            },
+        ]
+    },
+    //"include": [
+    //    "*",
+    //]
+}

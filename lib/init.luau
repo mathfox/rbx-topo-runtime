@@ -1,4 +1,3 @@
---!strict
 --!native
 --!optimize 2
 
@@ -145,11 +144,12 @@ end
 
 	A lot of talk for something so simple, right?
 
-    @param key - unique value
 	@param discriminator? any -- A unique value to additionally key by
 	@param cleanupCallback (storage: {}) -> boolean? -- A function to run when the storage for this hook is cleaned up
 ]=]
-local function useHookState(baseKey: any, discriminator: any, cleanupCallback: CleanupCallback): any
+local function useHookState(discriminator: any, cleanupCallback: CleanupCallback): any
+    local baseKey = _G.__TOPO_RUNTIME_BASE_KEY
+
 	local currentFrame = stack[#stack]
 	if currentFrame == nil then
 		error("Attempt to access topologically-aware storage outside of a Loop-system context.", 3)
@@ -244,6 +244,7 @@ function Loop.new()
 end
 
 function Loop:schedule(system)
+    --local key2 = _G.__TOPO_RUNTIME_SCHEDULE_KEY
     local source, name, line = debug.info(system, "snl")
     local key = `{source}:{name}:{line}`
 
@@ -360,12 +361,6 @@ function Loop:schedule(system)
     end
 end
 
-local function getKey()
-    local source, line = debug.info(3, "sl")
-    local name = debug.info(2, "n");
-    return `{source}::{name}::{line}`
-end
-
 local exports = {
 	start = start,
 	useHookState = useHookState,
@@ -374,7 +369,6 @@ local exports = {
 	withinTopoContext = withinTopoContext,
 	useDeltaTime = useDeltaTime,
 	Loop = Loop,
-    getKey = getKey,
 }
 
 return exports

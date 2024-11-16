@@ -5,18 +5,17 @@ export interface FrameState {
 }
 
 export interface Node {
-	frame?: FrameState;
+	frame?: FrameState,
 	currentSystem?: System,
 	system?: Map<System, {
-		storage: Map<string, any>;
-		cleanupCallback: (storage: any) => boolean | void;
+		storage: Map<string, any>,
+		cleanupCallback: (storage: any) => boolean | void,
 	}>;
 }
 
 export function start(node: Node, fn: () => void): void;
 
 export function useHookState<TStorage>(
-    baseKey: unknown,
 	discriminator?: unknown,
 	cleanupCallback?: (storage: TStorage) => boolean | void,
 ): TStorage;
@@ -60,5 +59,3 @@ export class Loop {
 }
 
 export function useDeltaTime(): number;
-
-export declare function getKey(): string;

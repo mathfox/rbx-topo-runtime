@@ -1,28 +1,38 @@
 {
-	"name": "@rbxts/topo-runtime",
-	"version": "0.4.2",
-	"description": "Topologically-aware runtime for Roblox",
-	"main": "src/init.luau",
-	"types": "src/index.d.ts",
-	"files": ["src"],
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/mathfox/rbx-topo-runtime.git"
-	},
-	"keywords": ["roblox", "roblox-ts", "topo", "topological", "runtime"],
-	"author": {
-		"name": "Ivan Leontev",
-		"url": "https://github.com/mathfox"
-	},
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/mathfox/rbx-topo-runtime/issues"
-	},
-	"homepage": "https://github.com/mathfox/rbx-topo-runtime#readme",
-	"publishConfig": {
-		"access": "public"
-	},
-	"devDependencies": {
-		"@rbxts/compiler-types": "^3.0.0-types.0"
-	}
+    "name": "@rbxts/topo-runtime",
+    "version": "0.5.0",
+    "description": "Topologically-aware runtime for Roblox",
+    "main": "lib/init.luau",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib",
+        "transform/out",
+        "!**/*.tsbuildinfo"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mathfox/rbx-topo-runtime.git"
+    },
+    "keywords": [
+        "roblox",
+        "roblox-ts",
+        "topo",
+        "topological",
+        "runtime"
+    ],
+    "author": {
+        "name": "Ivan Leontev",
+        "url": "https://github.com/mathfox"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/mathfox/rbx-topo-runtime/issues"
+    },
+    "homepage": "https://github.com/mathfox/rbx-topo-runtime#readme",
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "@rbxts/compiler-types": "^3.0.0-types.0"
+    }
 }
