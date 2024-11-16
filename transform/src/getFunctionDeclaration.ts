@@ -11,6 +11,11 @@ export function getFunctionDeclaration(node: ts.Node, state: TransformState): ts
     }
 
     if (!symbol) return;
+    if (!symbol.declarations) return;
 
-    return symbol.valueDeclaration;
+    for (const decl of symbol.declarations) {
+        if (ts.isFunctionDeclaration(decl) && decl.body?.statements) return decl;
+    }
+
+    //return symbol.valueDeclaration;
 }

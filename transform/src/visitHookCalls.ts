@@ -15,7 +15,6 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
 
     if (!ts.isCallExpression(node)) return node;
 
-    //console.log(`Call to function ${node.expression.getText()} uses hook state`)
     const decl = getFunctionDeclaration(node.expression, state);
     if (!decl || !ts.isFunctionDeclaration(decl)) return node;
 
@@ -31,7 +30,7 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
 
     if (!functionUsesHookState) return node;
 
-    //console.log(`call of ${node.expression.getText()} requires setting bae key`)
+    //console.log(`call of ${node.expression.getText()} requires setting base key`)
 
     const hookCallStatement = f.createReturnStatement(node);
 
