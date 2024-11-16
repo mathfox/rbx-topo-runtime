@@ -9,15 +9,15 @@ function checkHookStateUsageStatementRecursive(node: ts.Node): boolean {
 
     //console.log("checkin", node.kind)
 
-//    if (ts.isVariableStatement(node)) {
-//        for (const decl of node.declarationList.declarations) {
-//            const init = decl.initializer;
-//            if (!init) continue;
-//
-//            const uses = checkHookStateUsageStatementRecursive(init);
-//            if (uses) return true;
-//        }
-//    }
+    if (ts.isVariableStatement(node)) {
+        for (const decl of node.declarationList.declarations) {
+            const init = decl.initializer;
+            if (!init) continue;
+
+            const uses = checkHookStateUsageStatementRecursive(init);
+            if (uses) return true;
+        }
+    }
 
     return false;
 }
