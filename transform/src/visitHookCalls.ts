@@ -36,7 +36,15 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
 
     const baseKeyAssignStatement = f.createExpressionStatement(f.createBinaryExpression(
         f.createPropertyAccessExpression(
-            f.createIdentifier("_G"),
+            f.createParenthesizedExpression(f.createAsExpression(
+                f.createIdentifier("_G"),
+                f.createTypeLiteralNode([f.createPropertySignature(
+                    undefined,
+                    f.createIdentifier("__TOPO_RUNTIME_BASE_KEY"),
+                    undefined,
+                    f.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+                )])
+            )),
             f.createIdentifier("__TOPO_RUNTIME_BASE_KEY")
         ),
         f.createToken(ts.SyntaxKind.EqualsToken),
