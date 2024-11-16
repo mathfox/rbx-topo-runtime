@@ -5,21 +5,9 @@ import { GlobalState } from "./GlobalState";
 
 function checkHookStateUsageStatementRecursive(node: ts.Node): boolean {
     if (ts.isCallExpression(node) && node.expression.getText() === "useHookState") return true;
-    if (ts.isExpressionStatement(node)) return checkHookStateUsageStatementRecursive(node.expression)
+    if (ts.isExpressionStatement(node)) return checkHookStateUsageStatementRecursive(node.expression);
 
-    //console.log("checkin", node.kind)
-
-    if (ts.isVariableStatement(node)) {
-        for (const decl of node.declarationList.declarations) {
-            const init = decl.initializer;
-            if (!init) continue;
-
-            const uses = checkHookStateUsageStatementRecursive(init);
-            if (uses) return true;
-        }
-    }
-
-    return false;
+    return ts.forEachChild(node, checkHookStateUsageStatementRecursive) ?? false;
 }
 
 export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {

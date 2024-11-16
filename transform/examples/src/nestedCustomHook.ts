@@ -1,6 +1,10 @@
 import { customHook } from "./customHook";
 
-export function nestedCustomHook() {
+function nestedCustomHook() {
     // do some stuff
     const value = customHook();
+}
+
+function system() {
+    nestedCustomHook();
 }
