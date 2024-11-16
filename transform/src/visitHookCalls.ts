@@ -4,88 +4,78 @@ import { v4 as uuid } from "uuid";
 import path from "path"
 import { getFunctionDeclaration } from "./getFunctionDeclaration";
 
-function checkDeclarationUseRecursive(expr: ts.Expression, decl: ts.Declaration, state: TransformState): boolean {
-    const declaration = getFunctionDeclaration(expr, state);
+function checkHookStateUsageStatementRecursive(node: ts.Node): boolean {
+    if (ts.isCallExpression(node) && node.expression.getText() === "useHookState") return true;
+    if (ts.isExpressionStatement(node)) return checkHookStateUsageStatementRecursive(node.expression)
 
-    return false
-}
+    //console.log("checkin", node.kind)
 
-export function visitHookCalls(node: ts.Node, state: TransformState): [true, ts.Node[]] | [false, undefined] {
-    const f = state.context.factory;
-
-    //node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
-
-//    if (ts.isFunctionDeclaration(node)) {
-//        //for (const s of node.body?.statements!) {
-//        //    console.log("Function decl ", node.name?.escapedText, s.kind)
-//        //}
+//    if (ts.isVariableStatement(node)) {
+//        for (const decl of node.declarationList.declarations) {
+//            const init = decl.initializer;
+//            if (!init) continue;
 //
-//        let times = 0;
-//
-//        for (const statement of node.body!.statements) {
-//            ts.forEachChild(statement, (node) => {
-//                //console.log("func statement", node.kind)
-//                if (ts.isCallExpression(node)) {
-//                    times++;
-//                }
-//            })
+//            const uses = checkHookStateUsageStatementRecursive(init);
+//            if (uses) return true;
 //        }
-//
-//        console.log(node)
-//        console.log("Function ", node.name?.escapedText, "call other funcs inside times:", times);
 //    }
 
-    if (ts.isCallExpression(node)) {
-        const decl = getFunctionDeclaration(node.expression, state);
-        if (decl) {}
+    return false;
+}
 
-        console.log(node.expression.getText(), " is declared at:", decl?.getSourceFile().getLineAndCharacterOfPosition(decl.getStart()));
-        // TODO: use unique indexes instead of generating UUID for everything.
+export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
+    const f = state.context.factory;
 
-        if (node.expression.getText() === "useHookState") {
-            //console.log(`got useHookState call expression, source declaration is:`, declaration);
+    if (!ts.isCallExpression(node)) return node;
 
-            const hookCallStatement = f.createReturnStatement(f.createCallExpression(
-                f.createIdentifier("useHookState"),
-                undefined,
-                [
-                    node.arguments[0] || f.createIdentifier("undefined"),
-                    node.arguments[1] || f.createIdentifier("undefined"),
-                ]
-            ));
+    //console.log(`Call to function ${node.expression.getText()} uses hook state`)
+    const decl = getFunctionDeclaration(node.expression, state);
+    if (!decl || !ts.isFunctionDeclaration(decl)) return node;
 
-            const baseKeyAssignStatement = f.createExpressionStatement(f.createBinaryExpression(
-                f.createPropertyAccessExpression(
-                    f.createIdentifier("_G"),
-                    f.createIdentifier("__TOPO_RUNTIME_BASE_KEY")
-                ),
-                f.createToken(ts.SyntaxKind.EqualsToken),
-                f.createStringLiteral(uuid())
-            ));
+    const statements = decl.body?.statements
+    if (!statements) return node;
 
-            const invoked = f.createCallExpression(
-                f.createParenthesizedExpression(
-                    f.createArrowFunction(
-                        undefined,
-                        undefined,
-                        [],
-                        undefined,
-                        f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-                        f.createBlock([
-                            baseKeyAssignStatement,
-                            hookCallStatement,
-                        ], true)
-                    )
-                ),
-                undefined,
-                []
-            )
+    let functionUsesHookState = false;
 
-            const nodes = [node];
-
-            return [true, [invoked]]
-        }
+    for (const st of statements) {
+        functionUsesHookState = checkHookStateUsageStatementRecursive(st);
+        if (functionUsesHookState) break;
     }
 
-    return [false, undefined]
+    if (!functionUsesHookState) return node;
+
+    //console.log(`call of ${node.expression.getText()} requires setting bae key`)
+
+    // TODO: use unique indexes instead of generating UUID for everything.
+
+    const hookCallStatement = f.createReturnStatement(node);
+
+    const baseKeyAssignStatement = f.createExpressionStatement(f.createBinaryExpression(
+        f.createPropertyAccessExpression(
+            f.createIdentifier("_G"),
+            f.createIdentifier("__TOPO_RUNTIME_BASE_KEY")
+        ),
+        f.createToken(ts.SyntaxKind.EqualsToken),
+        f.createStringLiteral(uuid())
+    ));
+
+    const invoked = f.createCallExpression(
+        f.createParenthesizedExpression(
+            f.createArrowFunction(
+                undefined,
+                undefined,
+                [],
+                undefined,
+                f.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
+                f.createBlock([
+                    baseKeyAssignStatement,
+                    hookCallStatement,
+                ], true)
+            )
+        ),
+        undefined,
+        []
+    );
+
+    return [invoked] as any;
 }
