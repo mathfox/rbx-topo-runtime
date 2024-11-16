@@ -5,6 +5,15 @@ The approach allows for seamless hot-reloading and thus better DX.
 
 Check out the `make-jsx` package to use JSX in conjunction with hooks like `useInstance`.
 
+## Setup
+
+Add the following entry inside `compilerOptions.plugins` of the tsconfig:
+```json
+{
+    "transform": "@rbxts/topo-runtime/transform/out/index.js"
+}
+```
+
 ## Basic Usage
 
 ```ts
