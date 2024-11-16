@@ -1,8 +1,7 @@
 import ts from "typescript";
 import { TransformState } from "./TransformState";
-import { v4 as uuid } from "uuid";
-import path from "path"
 import { getFunctionDeclaration } from "./getFunctionDeclaration";
+import { GlobalState } from "./GlobalState";
 
 function checkHookStateUsageStatementRecursive(node: ts.Node): boolean {
     if (ts.isCallExpression(node) && node.expression.getText() === "useHookState") return true;
@@ -46,8 +45,6 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
 
     //console.log(`call of ${node.expression.getText()} requires setting bae key`)
 
-    // TODO: use unique indexes instead of generating UUID for everything.
-
     const hookCallStatement = f.createReturnStatement(node);
 
     const baseKeyAssignStatement = f.createExpressionStatement(f.createBinaryExpression(
@@ -56,7 +53,7 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
             f.createIdentifier("__TOPO_RUNTIME_BASE_KEY")
         ),
         f.createToken(ts.SyntaxKind.EqualsToken),
-        f.createStringLiteral(uuid())
+        f.createStringLiteral(`${GlobalState.hookCalls++}`)
     ));
 
     const invoked = f.createCallExpression(
