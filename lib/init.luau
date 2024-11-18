@@ -205,6 +205,7 @@ type LoopProperties = {
 	_systems: { [string]: System },
     -- [ModuleFullName + FunctionName + Line]: state
 	_systemState: { [string]: any },
+	_systemLastTime: { [string]: number },
 
 	_systemErrors: { [string]: any },
 	trackErrors: boolean,
@@ -234,6 +235,7 @@ function Loop.new()
 	local self = setmetatable({
 		_systemState = {},
 		_systems = {},
+        _systemLastTime = {},
 		_systemErrors = {},
 		_skipSystems = {},
 		trackErrors = true,
@@ -249,14 +251,17 @@ function Loop:schedule(system)
     local key = `{source}:{name}`
 
     self._systems[key] = system
-	self._systemState[key] = {}
-
-    local lastTime = os.clock()
+    if self._systemState[key] == nil then
+        self._systemState[key] = {}
+    end
+    if self._systemLastTime[key] == nil then
+        self._systemLastTime[key] = os.clock()
+    end
 
     return function()
         local currentTime = os.clock()
-        local deltaTime = currentTime - lastTime
-        lastTime = currentTime
+        local deltaTime = currentTime - self._systemLastTime[key];
+        self._systemLastTime[key] = currentTime;
 
         start({
             system = self._systemState[key],
@@ -358,6 +363,7 @@ function Loop:schedule(system)
         }, function() end)
 
         self._systemState[key] = nil
+        self._systemLastTime[key] = nil
     end
 end
 

@@ -39,6 +39,7 @@ export interface SystemSamples extends Array<number> {
 export class Loop {
 	_systems: Map<string, System>;
     _systemState: Map<string, object>;
+    _systemLastTime: Map<string, number>;
 
     _skipSystems: Set<string>;
 
