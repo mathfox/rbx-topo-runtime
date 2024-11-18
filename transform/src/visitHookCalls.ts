@@ -1,6 +1,7 @@
 import ts from "typescript";
 import { TransformState } from "./TransformState";
 import { getFunctionDeclaration } from "./getFunctionDeclaration";
+import { cyrb53 } from "./cyrb53";
 
 function checkHookStateUsageStatementRecursive(node: ts.Node): boolean {
     if (ts.isCallExpression(node) && node.expression.getText() === "useHookState") return true;
@@ -50,7 +51,7 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
             f.createIdentifier("__TOPO_RUNTIME_BASE_KEY")
         ),
         f.createToken(ts.SyntaxKind.EqualsToken),
-        f.createStringLiteral(`${nodeLineAndChar.line}::${nodeLineAndChar.character}::${node.getText()}`)
+        f.createStringLiteral(`${nodeLineAndChar.line}::${nodeLineAndChar.character}::${cyrb53(node.getText())}`)
     ));
 
     const invoked = f.createCallExpression(
