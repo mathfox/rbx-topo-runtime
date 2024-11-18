@@ -1,7 +1,6 @@
 import ts from "typescript";
 import { TransformState } from "./TransformState";
 import { getFunctionDeclaration } from "./getFunctionDeclaration";
-import { GlobalState } from "./GlobalState";
 
 function checkHookStateUsageStatementRecursive(node: ts.Node): boolean {
     if (ts.isCallExpression(node) && node.expression.getText() === "useHookState") return true;
@@ -34,6 +33,9 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
 
     const hookCallStatement = f.createReturnStatement(node);
 
+    const file = node.getSourceFile();
+    const nodeLineAndChar = file.getLineAndCharacterOfPosition(node.getStart());
+
     const baseKeyAssignStatement = f.createExpressionStatement(f.createBinaryExpression(
         f.createPropertyAccessExpression(
             f.createParenthesizedExpression(f.createAsExpression(
@@ -48,7 +50,7 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
             f.createIdentifier("__TOPO_RUNTIME_BASE_KEY")
         ),
         f.createToken(ts.SyntaxKind.EqualsToken),
-        f.createStringLiteral(`${GlobalState.hookCalls++}`)
+        f.createStringLiteral(`${nodeLineAndChar.line}::${nodeLineAndChar.character}::${node.getText()}`)
     ));
 
     const invoked = f.createCallExpression(

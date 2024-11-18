@@ -3,7 +3,6 @@ import { TransformState } from "./TransformState";
 import { visitHookCalls } from "./visitHookCalls";
 
 export function visitNode(node: ts.Node, state: TransformState): any {
-    // TODO:
     for (const transformer of [visitHookCalls]) {
         node = transformer(node, state);
     }

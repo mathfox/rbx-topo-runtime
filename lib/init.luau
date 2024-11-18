@@ -244,9 +244,9 @@ function Loop.new()
 end
 
 function Loop:schedule(system)
-    --local key2 = _G.__TOPO_RUNTIME_SCHEDULE_KEY
-    local source, name, line = debug.info(system, "snl")
-    local key = `{source}:{name}:{line}`
+    local source, name = debug.info(system, "sn")
+    assert(name ~= nil, "Attempted to schedule anonymous function, only named functions are allowed")
+    local key = `{source}:{name}`
 
     self._systems[key] = system
 	self._systemState[key] = {}

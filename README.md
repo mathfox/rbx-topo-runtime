@@ -68,3 +68,22 @@ export function customHook(discriminator?: unknown) {
     return // some stuff
 }
 ```
+
+## Advanced
+
+When implementing the hot-reload behavior for systems, the following behaviors should be considered.
+
+The unique key for determining the system state is consists of 2 parts:
+- source of the script (the same as GetFullName());
+- system name;
+It means that moving the system declaration around or adding a new ones won't affect it's state when hot-reloaded.
+An attempt to schedule the anonymous function will result in an error being thrown.
+
+> The system state is a map where the key is a `base key` and the value is table consisting a `hooks storage` alongside `cleanup callback`.
+> The hooks storage is a map where the key is a `discriminator` (if not provided, it defaults to 0) and the value is a `discriminated hook storage`.
+
+The base keys are generated at compile time.
+These keys are unique per file and consist of the following parts:
+- the line and the character;
+- the text of the hook expression;
+It means that any line/character/text adjustments of the hook calls will result in their state being lost.
