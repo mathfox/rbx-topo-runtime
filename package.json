@@ -1,6 +1,6 @@
 {
     "name": "@rbxts/topo-runtime",
-    "version": "0.6.2",
+    "version": "0.7.0",
     "description": "Topologically-aware runtime for Roblox",
     "main": "lib/init.luau",
     "types": "lib/index.d.ts",
@@ -36,3 +36,4 @@
         "@rbxts/compiler-types": "^3.0.0-types.0"
     }
 }
+
