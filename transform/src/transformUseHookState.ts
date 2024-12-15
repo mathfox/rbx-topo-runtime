@@ -3,6 +3,8 @@ import { TransformState } from "./TransformState";
 import { getFunctionDeclaration } from "./getFunctionDeclaration";
 import { cyrb53 } from "./cyrb53";
 
+const GLOBAL_KEY = "__TOPO_RUNTIME_BASE_KEY";
+
 function checkHookStateUsageStatementRecursive(node: ts.Node): boolean {
     if (ts.isCallExpression(node) && node.expression.getText() === "useHookState") return true;
     if (ts.isExpressionStatement(node)) return checkHookStateUsageStatementRecursive(node.expression);
@@ -10,10 +12,8 @@ function checkHookStateUsageStatementRecursive(node: ts.Node): boolean {
     return ts.forEachChild(node, checkHookStateUsageStatementRecursive) ?? false;
 }
 
-export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
+export function transformUseHookState(state: TransformState, node: ts.CallExpression): ts.CallExpression {
     const f = state.context.factory;
-
-    if (!ts.isCallExpression(node)) return node;
 
     const decl = getFunctionDeclaration(node.expression, state);
     if (!decl || !ts.isFunctionDeclaration(decl)) return node;
@@ -30,8 +30,6 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
 
     if (!functionUsesHookState) return node;
 
-    //console.log(`call of ${node.expression.getText()} requires setting base key`)
-
     const hookCallStatement = f.createReturnStatement(node);
 
     const file = node.getSourceFile();
@@ -43,15 +41,15 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
                 f.createIdentifier("_G"),
                 f.createTypeLiteralNode([f.createPropertySignature(
                     undefined,
-                    f.createIdentifier("__TOPO_RUNTIME_BASE_KEY"),
+                    f.createIdentifier(GLOBAL_KEY),
                     undefined,
                     f.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
                 )])
             )),
-            f.createIdentifier("__TOPO_RUNTIME_BASE_KEY")
+            f.createIdentifier(GLOBAL_KEY)
         ),
         f.createToken(ts.SyntaxKind.EqualsToken),
-        f.createStringLiteral(`${nodeLineAndChar.line}::${nodeLineAndChar.character}::${cyrb53(node.getText())}`)
+        f.createStringLiteral(`${cyrb53(`${nodeLineAndChar.line}::${nodeLineAndChar.character}::${node.getText()}`)}`)
     ));
 
     const invoked = f.createCallExpression(
@@ -72,5 +70,5 @@ export function visitHookCalls(node: ts.Node, state: TransformState): ts.Node {
         []
     );
 
-    return [invoked] as any;
+    return invoked;
 }
