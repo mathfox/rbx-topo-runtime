@@ -9,22 +9,19 @@
         "forceConsistentCasingInFileNames": true,
         "moduleDetection": "force",
         "target": "ESNext",
-        //"typeRoots": [
-        //    "node_modules/@rbxts",
-        //],
         "exactOptionalPropertyTypes": true,
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,
         "rootDir": "./src",
         "outDir": "./out",
-        //"baseUrl": "../examples",
         "plugins": [
             {
-                "transform": "../out/index.js",
+                "transform": "../out/index.js"
             },
+            {
+                "transform": "../out/index.js"
+            }
         ]
-    },
-    //"include": [
-    //    "*",
-    //]
+    }
 }
+

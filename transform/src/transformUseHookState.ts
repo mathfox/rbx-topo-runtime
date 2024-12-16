@@ -1,9 +1,29 @@
 import ts from "typescript";
 import { TransformState } from "./TransformState";
-import { getFunctionDeclaration } from "./getFunctionDeclaration";
 import { cyrb53 } from "./cyrb53";
 
 const GLOBAL_KEY = "__TOPO_RUNTIME_BASE_KEY";
+
+// Attempts to get the declaration of the function;
+export function getFunctionDeclaration(node: ts.Node, state: TransformState): ts.FunctionDeclaration | undefined {
+    const checker = state.program.getTypeChecker();
+
+    let symbol = checker.getSymbolAtLocation(node);
+
+    if (symbol && symbol.flags & ts.SymbolFlags.Alias) {
+        symbol = checker.getAliasedSymbol(symbol);
+    }
+
+    if (!symbol) return;
+    if (!symbol.declarations) return;
+
+    // Ensure we return only the implementation version;
+    for (const decl of symbol.declarations) {
+        if (ts.isFunctionDeclaration(decl) && decl.body?.statements) return decl;
+    }
+
+    //return symbol.valueDeclaration;
+}
 
 function checkHookStateUsageStatementRecursive(node: ts.Node): boolean {
     if (ts.isCallExpression(node) && node.expression.getText() === "useHookState") return true;
@@ -16,24 +36,17 @@ export function transformUseHookState(state: TransformState, node: ts.CallExpres
     const f = state.context.factory;
 
     const decl = getFunctionDeclaration(node.expression, state);
-    if (!decl || !ts.isFunctionDeclaration(decl)) return node;
+    if (!decl) return node;
 
-    const statements = decl.body?.statements
-    if (!statements) return node;
-
-    let functionUsesHookState = false;
-
-    for (const st of statements) {
-        functionUsesHookState = checkHookStateUsageStatementRecursive(st);
-        if (functionUsesHookState) break;
-    }
-
-    if (!functionUsesHookState) return node;
-
-    const hookCallStatement = f.createReturnStatement(node);
+    const declUsesHookState = decl.body?.statements.some(checkHookStateUsageStatementRecursive) ?? false;
+    if (!declUsesHookState) return node;
 
     const file = node.getSourceFile();
     const nodeLineAndChar = file.getLineAndCharacterOfPosition(node.getStart());
+
+    const clonedCall = f.updateCallExpression(node, node.expression, node.typeArguments, node.arguments);
+
+    const hookCallStatement = f.createReturnStatement(clonedCall);
 
     const baseKeyAssignStatement = f.createExpressionStatement(f.createBinaryExpression(
         f.createPropertyAccessExpression(
