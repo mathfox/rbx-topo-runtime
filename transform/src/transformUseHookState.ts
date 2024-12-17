@@ -44,9 +44,7 @@ export function transformUseHookState(state: TransformState, node: ts.CallExpres
     const file = node.getSourceFile();
     const nodeLineAndChar = file.getLineAndCharacterOfPosition(node.getStart());
 
-    const clonedCall = f.updateCallExpression(node, node.expression, node.typeArguments, node.arguments);
-
-    const hookCallStatement = f.createReturnStatement(clonedCall);
+    const hookCallStatement = f.createReturnStatement(node);
 
     const baseKeyAssignStatement = f.createExpressionStatement(f.createBinaryExpression(
         f.createPropertyAccessExpression(
